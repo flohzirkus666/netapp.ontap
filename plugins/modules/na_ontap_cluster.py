@@ -104,6 +104,11 @@ EXAMPLES = """
       netapp.ontap.na_ontap_cluster:
         state: present
         cluster_name: new_cluster
+        cluster_password: Netapp1!
+        domains:
+          - demo.netapp.com
+        nameservers:
+          - 192.168.0.253
         time_out: 0
         hostname: "{{ netapp_hostname }}"
         username: "{{ netapp_username }}"
@@ -179,11 +184,14 @@ class NetAppONTAPCluster:
         self.argument_spec.update(dict(
             state=dict(required=False, type='str', choices=['present', 'absent'], default='present'),
             cluster_name=dict(required=False, type='str'),
+            cluster_password=dict(required=False, type='str'),
             cluster_ip_address=dict(required=False, type='str'),
             cluster_location=dict(required=False, type='str'),
             cluster_contact=dict(required=False, type='str'),
+            domains=dict(required=False, type='list', elements='str'),
             force=dict(required=False, type='bool', default=False),
             single_node_cluster=dict(required=False, type='bool'),
+            nameservers=dict(required=False, type='list', elements='str'),
             node_name=dict(required=False, type='str'),
             time_out=dict(required=False, type='int', default=180),
             timezone=dict(required=False, type='dict', options=dict(
@@ -388,8 +396,12 @@ class NetAppONTAPCluster:
             'cluster_contact': 'contact',
             'cluster_location': 'location',
             'cluster_name': 'name',
+            'cluster_password': 'password',
             'single_node_cluster': 'single_node_cluster',
-            'timezone': 'timezone'
+            'timezone': 'timezone',
+            'domains': 'dns_domains',
+            'nameservers': 'name_servers',
+            'management_interface': 'management_interface'
         }.items():
             if param_key in params:
                 body[rest_key] = params[param_key]
