@@ -194,9 +194,7 @@ class NetAppONTAPCluster:
             nameservers=dict(required=False, type='list', elements='str'),
             node_name=dict(required=False, type='str'),
             time_out=dict(required=False, type='int', default=180),
-            timezone=dict(required=False, type='dict', options=dict(
-                name=dict(type='str')
-            ))
+            timezone=dict(required=False, type='str')
         ))
 
         self.module = AnsibleModule(
@@ -389,7 +387,7 @@ class NetAppONTAPCluster:
             nodes = self.get_cluster_ip_addresses(cluster_ip_address, ignore_error=ignore_error)
         return nodes if len(nodes) > 0 else None
 
-    def create_cluster_body(self, modify=None, nodes=None):
+    def create_cluster_body(self, modify=None, nodes=None, timezone=None):
         body = {}
         params = modify if modify is not None else self.parameters
         for (param_key, rest_key) in {
@@ -398,7 +396,6 @@ class NetAppONTAPCluster:
             'cluster_name': 'name',
             'cluster_password': 'password',
             'single_node_cluster': 'single_node_cluster',
-            'timezone': 'timezone',
             'domains': 'dns_domains',
             'nameservers': 'name_servers',
             'management_interface': 'management_interface'
@@ -407,6 +404,8 @@ class NetAppONTAPCluster:
                 body[rest_key] = params[param_key]
         if nodes:
             body['nodes'] = nodes
+        if timezone:
+            body['timezone'] = {'name': timezone}
         return body
 
     def create_node_body(self):
@@ -423,13 +422,16 @@ class NetAppONTAPCluster:
     def create_nodes(self):
         node = self.create_node_body()
         return [node] if node else None
+    
+    def add_time_zone(self):
+        return self.argument_spec.timezone if self.argument_spec.timezone else None
 
     def create_cluster_rest(self, older_api=False):
         """
         Create a cluster
         """
         query = None
-        body = self.create_cluster_body(nodes=self.create_nodes())
+        body = self.create_cluster_body(nodes=self.create_nodes(), timezone=self.add_time_zone())
         if 'single_node_cluster' in body:
             query = {'single_node_cluster': body.pop('single_node_cluster')}
         dummy, error = rest_generic.post_async(self.rest_api, 'cluster', body, query, job_timeout=120)
