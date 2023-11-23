@@ -62,6 +62,24 @@ The following modules do not have REST equivalent APIs. They will stop working o
 
 # Release Notes
 
+## 22.9.0
+
+### New Modules
+  - na_ontap_snmp_config - REST only support for modifying SNMP configuration, requires ONTAP 9.7 or later.
+
+## 22.8.3
+
+### Bug Fixes
+  - na_ontap_vserver_peer - fix issue with peering multiple clusters with same vserver name in REST.
+  - na_ontap_ems_destination - fix field error with `certificate.name` for ONTAP 9.11.1 or later in REST.
+  - na_ontap_snmp - fix for getting error when `authentication_method` set to default with ZAPI.
+
+## 22.8.1
+
+### Bug Fixes
+  - na_ontap_dns - fix keyerror for uuid when DNS is set to vserver in REST.
+  - na_ontap_volume - fix invalid field error with 'space.snapshot.autodelete' in REST.
+
 ## 22.8.0
 
 ### New Options
