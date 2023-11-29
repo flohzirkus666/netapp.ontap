@@ -76,8 +76,7 @@ def get_0_or_more_records(rest_api, api, query=None, fields=None):
 
 def post_async(rest_api, api, body, query=None, timeout=30, job_timeout=30, headers=None, raw_error=False, files=None):
     # if we set a admin password during cluster creation, update the current one in our header
-    if 'password' in body:
-        headers['password'] = body['password']
+    print(body)
     # see delete_async for async and sync operations and status codes
     response, error = rest_api.post(api, body=body, params=build_query_with_timeout(query, timeout), headers=headers, files=files)
     # limit the polling interval to something between 5 seconds and 60 seconds
