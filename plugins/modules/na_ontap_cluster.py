@@ -404,8 +404,6 @@ class NetAppONTAPCluster:
                 body[rest_key] = params[param_key]
         if nodes:
             body['nodes'] = nodes
-        if timezone:
-            body['timezone'] = {'name': timezone}
         return body
 
     def create_node_body(self):
