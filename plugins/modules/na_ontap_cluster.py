@@ -194,7 +194,7 @@ class NetAppONTAPCluster:
             nameservers=dict(required=False, type='list', elements='str'),
             node_name=dict(required=False, type='str'),
             time_out=dict(required=False, type='int', default=180),
-            timezone=dict(required=False, type='str')
+            #timezone=dict(required=False, type='str')
         ))
 
         self.module = AnsibleModule(
@@ -423,15 +423,15 @@ class NetAppONTAPCluster:
         node = self.create_node_body()
         return [node] if node else None
     
-    def add_time_zone(self):
-        return self.argument_spec.timezone if self.argument_spec.timezone else None
+    # def add_time_zone(self):
+    #     return self.argument_spec.timezone if self.argument_spec.timezone else None
 
     def create_cluster_rest(self, older_api=False):
         """
         Create a cluster
         """
         query = None
-        body = self.create_cluster_body(nodes=self.create_nodes(), timezone=self.add_time_zone())
+        body = self.create_cluster_body(nodes=self.create_nodes())
         if 'single_node_cluster' in body:
             query = {'single_node_cluster': body.pop('single_node_cluster')}
         dummy, error = rest_generic.post_async(self.rest_api, 'cluster', body, query, job_timeout=120)
